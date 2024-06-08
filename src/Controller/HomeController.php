@@ -38,13 +38,13 @@ class HomeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Récuperer le fichier
             $file = $form["cv"]->getData();
-
-            $extension = $file->guessExtension();
+            $fileName = bin2hex(random_bytes(10));
+            $extension = $file->guessExtension() ?? "bin";
             $extensionsList = ["png", "jpg", "jpeg"];
 
             // Vérifier si le fichier a la bonne extension, si oui déplacer dans le dossier "/public/images"
             if (in_array($extension, $extensionsList, true)) {
-                $file->move('images', 'NouveauNomDuFichier.jpeg');
+                $file->move('images', $fileName . '.' . $extension);
             }
         }
 
