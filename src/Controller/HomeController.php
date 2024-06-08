@@ -27,6 +27,7 @@ class HomeController extends AbstractController
                 'attr' => [
                     'accept' => 'image/*',
                 ],
+                'multiple' => true
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Envoyer'
@@ -37,14 +38,18 @@ class HomeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Récuperer le fichier
-            $file = $form["cv"]->getData();
-            $fileName = bin2hex(random_bytes(10));
-            $extension = $file->guessExtension() ?? "bin";
+            $attachements = $form["cv"]->getData();
+
             $extensionsList = ["png", "jpg", "jpeg"];
 
-            // Vérifier si le fichier a la bonne extension, si oui déplacer dans le dossier "/public/images"
-            if (in_array($extension, $extensionsList, true)) {
-                $file->move('images', $fileName . '.' . $extension);
+            foreach ($attachements as $file) {
+                $fileName = bin2hex(random_bytes(10)); // créer un nom de fichier aléatoire, sécurisé et très probablement unique
+                $extension = $file->guessExtension() ?? "bin";
+                // Vérifier si le fichier a la bonne extension, si oui déplacer dans le dossier "/public/images"
+                if (in_array($extension, $extensionsList, true)) {
+
+                    $file->move('images', $fileName . '.' . $extension);
+                }
             }
         }
 
