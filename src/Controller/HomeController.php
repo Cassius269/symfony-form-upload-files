@@ -5,6 +5,8 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -20,14 +22,22 @@ class HomeController extends AbstractController
             ->add('firstname', TextType::class, [
                 'label' => 'Prénom:'
             ])
-            ->add('firstname', TextType::class, [
+            ->add('lastname', TextType::class, [
                 'label' => 'Prénom:'
             ])
             ->add('cv', FileType::class, [
-                'attr' => [
-                    'accept' => 'image/*',
-                ],
-                'multiple' => true
+
+                'multiple' => true,
+                'constraints' => [
+                    new All(new File(
+                        [
+                            'maxSize' => '2M',
+                            'maxSizeMessage' => 'Taille maximale atteinte pour {{ name }} et la taille limite est de {{ limit }} {{ suffix }}',
+                            'mimeTypes' => ['image/png', 'image/jpg', 'image/jpeg'],
+                            'mimeTypesMessage' => 'Veuillez soumettre une image'
+                        ]
+                    ))
+                ]
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Envoyer'
